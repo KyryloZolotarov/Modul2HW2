@@ -37,13 +37,13 @@ namespace Modul2HW2
             Console.WriteLine("Enter Ptoduct Price:");
             prodprice = Console.ReadLine();
             int stornumber = new GeneratorRandom().Rand(1000, 2000);
-            productinfo = stornumber.ToString() + " " + prodname + " " + prodcat + " " + prodprice;
-            _storage.StorLoad(productinfo);
+            productinfo = stornumber.ToString();
+            _storage.StoragetStringLoad(productinfo, prodname, prodcat, prodprice);
         }
 
         public void SaveToFile()
         {
-            File.WriteAllText("Storage.txt", string.Join(Environment.NewLine, _storage.GetStorage()));
+            File.WriteAllText("Storage.txt", _storage.GetStringStorage());
         }
 
         public void LoadStorageFromFile()
@@ -55,7 +55,7 @@ namespace Modul2HW2
                 var tempStor = File.ReadAllLines(path);
                 foreach (var line in tempStor)
                 {
-                    _storage.StorLoad(line);
+                    _storage.StoragetStringLoadFromFile(line);
                 }
             }
             else
@@ -79,27 +79,40 @@ namespace Modul2HW2
         public void DisplayStorage()
         {
             var counter = 1;
-            foreach (string product in _storage.GetStorage())
+            var tempstring = _storage.GetStringStorage().Split('\n');
+            var index = tempstring.Length;
+            index--;
+            for (int i = 0; i < index; i++)
             {
                 Console.Write(counter.ToString() + ". ");
-                Console.WriteLine(product);
+                Console.WriteLine(tempstring[i]);
                 counter++;
             }
         }
 
         public void ProductPick(string number)
         {
-            var index = 0;
-            if (!int.TryParse(number, out index))
+            if (!int.TryParse(number, out int index))
             {
                 Console.WriteLine("Item with this number doesn't exist");
                 return;
             }
 
-            index = index - 1;
-            if (index >= 0 && index < _storage.GetStorage().Count())
+            var tempstring = _storage.GetStringStorage().Split('\n');
+            index--;
+            string line = tempstring[index];
+            string[] linetemp = line.Split();
+            var i = 0;
+            string stornumber = linetemp[i];
+            i++;
+            string prodname = linetemp[i];
+            i++;
+            string prodcat = linetemp[i];
+            i++;
+            string prodprice = linetemp[i];
+            if (index >= 0 && index < tempstring.Length)
             {
-               _basket.BasketLoad(_storage.GetStorage()[index]);
+                _basket.BasketStringLoad(stornumber, prodname, prodcat, prodprice);
             }
             else
             {
@@ -109,7 +122,8 @@ namespace Modul2HW2
 
         public void DisplayBasket()
         {
-            foreach (var item in _basket.GetBasket())
+            var tempstring = _basket.GetBasket().Split('\n');
+            foreach (var item in tempstring)
             {
                 Console.WriteLine(item);
             }
@@ -118,8 +132,9 @@ namespace Modul2HW2
         public void SaveOrder(int ordernumber)
         {
             string orderN = "order_" + ordernumber.ToString() + ".txt";
-            File.WriteAllText(orderN, string.Join(Environment.NewLine, _basket.GetBasket()));
-            _basket.CLear();
+            var tempstring = _basket.GetBasket().TrimEnd('\n');
+            File.WriteAllText(orderN, tempstring);
+            _basket.ClearBasket();
         }
     }
 }

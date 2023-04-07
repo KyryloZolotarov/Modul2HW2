@@ -8,20 +8,34 @@ namespace Modul2HW2
 {
     internal class Basket
     {
-        private List<string> BasketStor { get; set; } = new List<string>();
-        public void BasketLoad(string productadded)
+        private Product[] _basketString = Array.Empty<Product>();
+        public void BasketStringLoad(string stornumber, string prodname, string prodcat, string prodprice)
         {
-            BasketStor.Add(productadded);
+            var length = _basketString.Length;
+            Array.Resize(ref _basketString, newSize: length + 1);
+            _basketString[length] = new Product
+            {
+                Stornumber = stornumber,
+                Prodname = prodname,
+                Prodcat = prodcat,
+                Prodprice = prodprice
+            };
         }
 
-        public List<string> GetBasket()
+        public string GetBasket()
         {
-            return BasketStor;
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var item in _basketString)
+            {
+                stringBuilder.AppendLine($"{item.Stornumber} {item.Prodname} {item.Prodcat} {item.Prodprice}");
+            }
+
+            return stringBuilder.ToString();
         }
 
-        public void CLear()
+        public void ClearBasket()
         {
-            BasketStor.Clear();
+            _basketString = Array.Empty<Product>();
         }
     }
 }

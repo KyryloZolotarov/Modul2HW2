@@ -14,6 +14,7 @@ namespace Modul2HW2
             var key = Console.ReadKey().Key;
             if (key == ConsoleKey.Enter)
             {
+                Console.WriteLine();
                 do
                 {
                     Tools.GetInstance().LoadStor();
